@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
         debugShowCheckedModeBanner: true, // change false or true
         home: HomePage());
   }
@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: new AppBar(title: new Text("Simple Calculator")),
+      appBar: AppBar(title: const Text("Simple Calculator")),
       backgroundColor: Colors.white38,
       body: Column(
         children: <Widget>[
@@ -66,19 +66,20 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(20),
                       alignment: Alignment.centerRight,
                       child: Text(
                         userInput,
-                        style: TextStyle(fontSize: 18, color: Colors.white),
+                        style:
+                            const TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.all(15),
+                      padding: const EdgeInsets.all(15),
                       alignment: Alignment.centerRight,
                       child: Text(
                         result,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 30,
                             color: Colors.white,
                             fontWeight: FontWeight.bold),
@@ -92,7 +93,7 @@ class _HomePageState extends State<HomePage> {
             child: Container(
               child: GridView.builder(
                   itemCount: buttons.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4),
                   itemBuilder: (BuildContext context, int index) {
                     // Clear Button
@@ -106,16 +107,104 @@ class _HomePageState extends State<HomePage> {
                           },
                           buttonText: buttons[index],
                           color: Colors.blue[50],
+                          textColor: Colors.red);
+                    }
+
+                    // Pos/Neg (+/-) Button
+                    // Unused button
+                    else if (index == 1) {
+                      return MyButton(
+                          buttonText: buttons[index],
+                          color: Colors.blue[50],
                           textColor: Colors.black);
                     }
 
-                    // Next Button
-                    // Continue later
+                    // MOD (%) Button
+                    else if (index == 2) {
+                      return MyButton(
+                          buttonTapped: () {
+                            setState(() {
+                              userInput += buttons[index];
+                            });
+                          },
+                          buttonText: buttons[index],
+                          color: Colors.blue[50],
+                          textColor: Colors.black);
+                    }
+
+                    // Delete Button
+                    // Unused button
+                    else if (index == 3) {
+                      return MyButton(
+                          buttonTapped: () {
+                            setState(() {
+                              userInput.substring(userInput.length - 1);
+                            });
+                          },
+                          buttonText: buttons[index],
+                          color: Colors.blue[50],
+                          textColor: Colors.black);
+                    }
+
+                    // Equal_to Button
+                    else if (index == 18) {
+                      return MyButton(
+                          buttonTapped: () {
+                            setState(() {
+                              equalPressed();
+                            });
+                          },
+                          buttonText: buttons[index],
+                          color: Colors.orange[700],
+                          textColor: Colors.white);
+                    }
+
+                    // Other Buttons
+                    else {
+                      return MyButton(
+                          buttonTapped: () {
+                            setState(() {
+                              userInput += buttons[index];
+                            });
+                          },
+                          buttonText: buttons[index],
+                          color: isOperator(buttons[index])
+                              ? Colors.blueAccent
+                              : Colors.white,
+                          textColor: isOperator(buttons[index])
+                              ? Colors.white
+                              : Colors.blueAccent);
+                    }
                   }),
             ),
           )
         ],
       ),
     );
+  }
+
+  bool isOperator(String buttonText) {
+    if (buttonText == '/' ||
+        buttonText == 'x' ||
+        buttonText == '-' ||
+        buttonText == '+' ||
+        buttonText == '=') {
+      return true;
+    }
+
+    return false;
+  }
+
+  // Function to calculate the input opreation
+  void equalPressed() {
+    String finalUserInput = userInput;
+    finalUserInput = userInput.replaceAll('x', '*');
+
+    // Imported from package math_expressions
+    Parser parser = Parser();
+    Expression expression = parser.parse(finalUserInput);
+    ContextModel contextModel = ContextModel();
+    double evaluate = expression.evaluate(EvaluationType.REAL, contextModel);
+    result = evaluate.toString();
   }
 }
