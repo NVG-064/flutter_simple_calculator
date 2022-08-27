@@ -1,11 +1,11 @@
-# flutter_simple_calculator
+# Flutter Simple Calculator
 
 Simple calculator using Flutter.
 This is not my code. Thanks to geeksforgeeks.org :)
 
 Original source: https://www.geeksforgeeks.org/simple-calculator-app-using-flutter/
 
-## Getting Started
+## What is this?
 
 Just my practice to learn Flutter
 
